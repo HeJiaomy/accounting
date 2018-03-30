@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
@@ -36,8 +37,8 @@ import com.accounting.base.MyApplication;
 import com.accounting.entity.BaseEntity;
 import com.accounting.entity.LoginEntity;
 import com.accounting.impl.LoginApi;
-import com.accounting.utils.HttpUtil;
-import com.accounting.utils.LogUtil;
+import com.accounting.utils.HttpUtils;
+import com.accounting.utils.LogUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -86,7 +87,6 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
 
     @Override
     public void init() {
-
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         populateAutoComplete(); //权限请求
@@ -103,6 +103,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
             }
         });
 
+        loginApiImpl = HttpUtils.getInstance().createApi(LoginApi.class);
         Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -115,10 +116,10 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
         mProgressView = findViewById(R.id.login_progress);
         setTitle("登录");
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        mSharedPreferences= getSharedPreferences("login",Context.MODE_PRIVATE);
-        email= mSharedPreferences.getString("name","");
-        password= mSharedPreferences.getString("password","");
-        loginApiImpl = HttpUtil.getInstance().createApi(LoginApi.class);
+        mSharedPreferences = getSharedPreferences("login", Context.MODE_PRIVATE);
+        email = mSharedPreferences.getString("name", "");
+        password = mSharedPreferences.getString("password", "");
+
     }
 
     private void populateAutoComplete() {
@@ -210,7 +211,8 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
             focusView.requestFocus();   //获取焦点
         } else {
             //异步登录
-            LoginMethod();
+//            LoginMethod();
+            goMain(null, email, password);
 //            mAuthTask = new UserLoginTask(email, password);
 //            mAuthTask.execute((Void) null);
         }
@@ -235,23 +237,23 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
                     @Override
                     public void accept(Throwable throwable) throws Exception {
                         showProgress(false);
-                        LogUtil.e("LoginActivity", throwable.toString());
+                        LogUtils.e("LoginActivity", throwable.toString());
                     }
                 });
     }
 
     private void goMain(LoginEntity response, String email, String password) {
-        MyApplication.getInstance().name= email;
-        MyApplication.getInstance().password= password;
-        SharedPreferences.Editor editor= mSharedPreferences.edit();
-        editor.putString("name",email);
-        editor.putString("password",password);
+        MyApplication.getInstance().name = email;
+        MyApplication.getInstance().password = password;
+        SharedPreferences.Editor editor = mSharedPreferences.edit();
+        editor.putString("name", email);
+        editor.putString("password", password);
         editor.apply();
-        Bundle bundle= new Bundle();
-        if (response!= null && response.getApp_describe()!= null){
-            bundle.putString("title",response.getApp_describe());
+        Bundle bundle = new Bundle();
+        if (response != null && response.getApp_describe() != null) {
+            bundle.putString("title", response.getApp_describe());
         }
-        goActivity(MainActivity.class,true,bundle);
+        gotoActivity(MainActivity.class, false, bundle);
     }
 
     /**
@@ -422,6 +424,12 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
             mAuthTask = null;
             showProgress(false);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        LogUtils.e("LoginActivity", "onDestroy执行了");
     }
 }
 

@@ -27,8 +27,8 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        MyApplication.getInstance().addActivity(this);
         setContentView(getProviderLayoutId());
+        MyApplication.getInstance().addActivity(this);
         mToolbar= findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
         actionBar= getSupportActionBar();
@@ -94,7 +94,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     /**
      * activity跳转
      */
-    public void goActivity(Class goClass,boolean isFinish,Bundle bundle){
+    public void gotoActivity(Class goClass,boolean isFinish,Bundle bundle){
         Intent intent= new Intent(this,goClass);
         if (bundle!= null){
             intent.putExtras(bundle);
@@ -108,7 +108,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        MyApplication.getInstance().clearActivity();
     }
 
     public void showProgressDialog(String title,String msg,boolean cancel){

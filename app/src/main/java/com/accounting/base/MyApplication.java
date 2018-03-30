@@ -5,6 +5,8 @@ import android.app.Application;
 import android.content.Context;
 import android.os.Process;
 
+import com.accounting.db.GreenDaoManager;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +28,7 @@ public class MyApplication extends Application {
         super.onCreate();
         mContext= getApplicationContext();
         myApplication= this;
+        GreenDaoManager.getInstance();
     }
 
     public static MyApplication getInstance(){

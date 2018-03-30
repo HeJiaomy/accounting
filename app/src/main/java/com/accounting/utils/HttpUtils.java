@@ -22,7 +22,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * Created by 12191 on 2018/1/26.
  */
 
-public class HttpUtil {
+public class HttpUtils {
 
     private static final String BASE_URL = "http://www.jxieyang.cn/";
 
@@ -31,14 +31,14 @@ public class HttpUtil {
     private Retrofit retrofit;
 
     private static class SingleHolder {
-        private static final HttpUtil INSTANCE = new HttpUtil();
+        private static final HttpUtils INSTANCE = new HttpUtils();
     }
 
-    public static synchronized HttpUtil getInstance() {
+    public static synchronized HttpUtils getInstance() {
         return SingleHolder.INSTANCE;
     }
 
-    private HttpUtil() {
+    private HttpUtils() {
         OkHttpClient.Builder client = new OkHttpClient.Builder();
         client.connectTimeout(15, TimeUnit.SECONDS);
         client.readTimeout(20, TimeUnit.SECONDS);
@@ -72,7 +72,7 @@ public class HttpUtil {
 
     }
     public <T> T createApi(Class<T> service){
-        if (apis.containsKey(service)){
+        if (!apis.containsKey(service)){
             T instance= retrofit.create(service);
             apis.put(service,instance);
         }
